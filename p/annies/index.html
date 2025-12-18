@@ -1,0 +1,84 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Annie&#39;s | snow removal</title>
+  <meta name="description" content="Annie&#39;s — snow removal. Fast response, easy booking. Call now or request service online." />
+  <style>
+    :root { --bg:#0b0f19; --card:rgba(255,255,255,.06); --border:rgba(255,255,255,.12); --text:#e8eefc; --muted:rgba(232,238,252,.75); }
+    body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);}
+    .wrap{max-width:980px;margin:0 auto;padding:26px 18px 60px;}
+    .tag{display:inline-block;padding:6px 10px;border:1px solid rgba(255,255,255,.18);border-radius:999px;font-size:12px;opacity:.9}
+    h1{font-size:38px;line-height:1.1;margin:16px 0 10px;}
+    p{line-height:1.55;color:var(--muted);margin:0 0 14px;}
+    .grid{display:grid;grid-template-columns:1.1fr .9fr;gap:18px;margin-top:18px;}
+    @media (max-width:880px){.grid{grid-template-columns:1fr;}}
+    .card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:16px;}
+    .btn{display:inline-block;padding:12px 14px;border-radius:12px;background:#fff;color:#0b0f19;text-decoration:none;font-weight:800}
+    .btn2{display:inline-block;padding:12px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.22);color:var(--text);text-decoration:none;font-weight:800}
+    .row{display:flex;gap:10px}
+    .row>div{flex:1}
+    label{display:block;margin:10px 0 6px;font-size:13px;color:rgba(232,238,252,.9)}
+    input,textarea{width:100%;padding:12px;border-radius:12px;border:1px solid rgba(255,255,255,.18);background:rgba(0,0,0,.25);color:var(--text);outline:none}
+    textarea{min-height:96px;resize:vertical}
+    .small{font-size:12px;color:rgba(232,238,252,.7)}
+    ul{margin:10px 0 0 18px;color:rgba(232,238,252,.85)}
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <span class="tag">Website Preview • Not Live Yet</span>
+    <h1>Annie&#39;s</h1>
+    <p><strong>snow removal</strong> — fast response, easy booking, and a simple form to capture new leads.</p>
+
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:10px">
+      <a class="btn" href="tel:+12267916847">Call Now</a>
+      <a class="btn2" href="#leadform">Request service</a>
+    </div>
+
+    <div class="grid">
+      <div class="card">
+        <h2 style="margin:0 0 8px">What this page does</h2>
+        <ul>
+          <li>Gives customers a clean “call now” option</li>
+          <li>Captures leads via a simple form</li>
+          <li>Can route leads to SMS/email once live</li>
+        </ul>
+        <p class="small" style="margin-top:12px">
+          This preview is private (not indexed) and meant to show what a simple 1-page site could look like.
+        </p>
+      </div>
+
+      <div class="card" id="leadform">
+        <h2 style="margin:0 0 8px">Request Service</h2>
+        <p class="small" style="margin-top:0">Preview form — once live, submissions can go to SMS/email automatically.</p>
+
+        <form method="POST" action="#" onsubmit="event.preventDefault(); alert('Preview form — not live yet.');">
+          <div class="row">
+            <div>
+              <label>Name</label>
+              <input name="name" placeholder="Your name" required />
+            </div>
+            <div>
+              <label>Phone</label>
+              <input name="phone" placeholder="(555) 555-5555" required />
+            </div>
+          </div>
+
+          <label>Where are you located?</label>
+          <textarea name="message" placeholder="Cross streets / issue details..." required></textarea>
+
+          <div style="margin-top:12px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+            <button class="btn" type="submit">Send Request</button>
+            <span class="small">Preview only • not indexed</span>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <p class="small" style="margin-top:16px">© Annie&#39;s — Website Preview</p>
+  </div>
+</body>
+</html>
