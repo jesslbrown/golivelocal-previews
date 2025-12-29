@@ -1,8 +1,6 @@
 export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
-    // 🔴 TEMP TEST — put this FIRST
-    return new Response("Worker is running ✅", { status: 200 });
 
     // Only allow /p/... previews (optional safety)
     if (!url.pathname.startsWith("/p/")) {
