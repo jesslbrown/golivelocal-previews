@@ -1,1 +1,3 @@
-
+name = "preview-gatekeeper"
+main = "src/index.js"
+compatibility_date = "2025-12-29"
