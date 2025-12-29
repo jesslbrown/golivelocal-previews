@@ -2,12 +2,12 @@ export default {
   async fetch(request, env, ctx) {
     const url = new URL(request.url);
 
-    // Only allow /p/... previews (optional safety)
+    // Only allow /p/... previews
     if (!url.pathname.startsWith("/p/")) {
       return new Response("Not found", { status: 404 });
     }
 
-    // Parse client slug from /p/<client>/...
+    // /p/<client>/...
     const parts = url.pathname.split("/").filter(Boolean); // ["p","client-abc",...]
     const clientSlug = parts[1] || "";
 
@@ -15,45 +15,68 @@ export default {
       return new Response("Missing preview id", { status: 400 });
     }
 
-    // ---- Kill switches (simple version) ----
-    // Global kill switch via env var
+    // Global kill switch
     if (env.GLOBAL_OFF === "1") {
       return disabledPage("Preview temporarily unavailable.");
     }
 
-    // Per-client kill using KV (optional)
-    // If you set up KV binding called KILLSWITCH, you can use this:
+    // Per-client kill switch (KV)
     if (env.KILLSWITCH) {
-      const status = await env.KILLSWITCH.get(clientSlug); // "off" or "on"
-      if (status === "off") {
-        return disabledPage("This preview has been turned off.");
+      // ✅ Support BOTH key styles:
+      // 1) "clientSlug" -> "off" OR JSON
+      // 2) "p/clientSlug" -> JSON
+      const v1 = await env.KILLSWITCH.get(clientSlug);
+      const v2 = await env.KILLSWITCH.get(`p/${clientSlug}`);
+      const raw = v1 ?? v2;
+
+      if (raw) {
+        // Simple legacy: "off"
+        if (String(raw).trim().toLowerCase() === "off") {
+          return disabledPage("This preview has been turned off.");
+        }
+
+        // JSON: {"status":"on|off","expiresAt":<unix seconds>}
+        try {
+          const obj = JSON.parse(raw);
+          const status = String(obj.status || "").toLowerCase();
+          const expiresAt = Number(obj.expiresAt || 0);
+          const now = Math.floor(Date.now() / 1000);
+
+          if (status === "off") {
+            return disabledPage("This preview has been turned off.");
+          }
+
+          if (expiresAt && now >= expiresAt) {
+            return disabledPage("This preview link has expired.");
+          }
+        } catch (e) {
+          // If it's not JSON and not "off", treat as "on"
+        }
       }
     }
 
-    // ---- Proxy to Pages origin ----
-    const origin = env.PAGES_ORIGIN; // e.g. https://golivelocal-previews.pages.dev
+    // Proxy to Pages origin
+    const origin = env.PAGES_ORIGIN; // https://golivelocal-previews.pages.dev
     if (!origin) {
       return new Response("Missing PAGES_ORIGIN", { status: 500 });
     }
 
     const targetUrl = new URL(origin);
-    targetUrl.pathname = url.pathname; // keep /p/client-abc/...
+    targetUrl.pathname = url.pathname;
     targetUrl.search = url.search;
 
-    // Forward request (method, headers, body)
     const newReq = new Request(targetUrl.toString(), request);
 
-    // Fetch from Pages
     const resp = await fetch(newReq);
 
-    // Optional: reduce caching surprises while testing
-    const newHeaders = new Headers(resp.headers);
-    newHeaders.set("Cache-Control", "no-store");
+    // While testing: avoid cache surprises
+    const headers = new Headers(resp.headers);
+    headers.set("Cache-Control", "no-store");
 
     return new Response(resp.body, {
       status: resp.status,
       statusText: resp.statusText,
-      headers: newHeaders,
+      headers,
     });
   },
 };
@@ -87,4 +110,3 @@ function escapeHtml(s = "") {
     .replace(/"/g, "&quot;")
     .replace(/'/g, "&#39;");
 }
-
