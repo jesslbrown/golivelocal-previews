@@ -128,7 +128,7 @@ function parseKV(raw) {
 
 function disabledPage(env, message) {
   // Set these in Worker → Settings → Variables
-  // STRIPE_CHECKOUT_URL = https://buy.stripe.com/...
+  // STRIPE_CHECKOUT_URL = https://buy.stripe.com/28E6oH7Zq4GObxF91F08g00
   // HOME_URL = https://golivelocal.ca (optional)
   const stripeUrl = env.STRIPE_CHECKOUT_URL || "https://golivelocal.ca";
   const homeUrl = env.HOME_URL || "https://golivelocal.ca";
