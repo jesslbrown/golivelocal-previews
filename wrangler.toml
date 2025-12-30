@@ -5,3 +5,8 @@ compatibility_date = "2025-12-29"
 [vars]
 PAGES_ORIGIN = "https://golivelocal-previews.pages.dev"
 GLOBAL_OFF = "0"
+
+kv_namespaces = [
+  { binding = "KILLSWITCH", id = "98d74064934541a6a3a36a7cef1b031d" }
+]
+
