@@ -2,11 +2,15 @@ name = "preview-gatekeeper"
 main = "src/index.js"
 compatibility_date = "2025-12-29"
 
+# Your custom domain route lives in Cloudflare dashboard routes,
+# but you can also define it here if you want.
+# routes = [{ pattern = "preview.golivelocal.ca/*", zone_name = "golivelocal.ca" }]
+
 [vars]
 PAGES_ORIGIN = "https://golivelocal-previews.pages.dev"
-GLOBAL_OFF = "0"
+# GLOBAL_OFF = "0"   # optional default
 
-kv_namespaces = [
-  { binding = "KILLSWITCH", id = "98d74064934541a6a3a36a7cef1b031d" }
-]
-
+[[kv_namespaces]]
+binding = "KILLSWITCH"
+id = "98d74064934541a6a3a36a7cef1b031d"
+# preview_id = "xxxx"  # only needed if you're using a preview namespace in `wrangler dev`
