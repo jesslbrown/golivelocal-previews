@@ -1,67 +1,93 @@
 export default {
-  async fetch(request, env, ctx) {
+  async fetch(request, env) {
     const url = new URL(request.url);
 
-    // Only allow /p/... previews
     if (!url.pathname.startsWith("/p/")) {
       return new Response("Not found", { status: 404 });
     }
 
-    const parts = url.pathname.split("/").filter(Boolean); // ["p","clientSlug",...]
+    const parts = url.pathname.split("/").filter(Boolean); // ["p","client-abc",...]
     const clientSlug = parts[1] || "";
-    if (!clientSlug) {
-      return new Response("Missing preview id", { status: 400 });
-    }
+    if (!clientSlug) return new Response("Missing preview id", { status: 400 });
+
+    const debug = url.searchParams.get("debug") === "1";
+    const now = Math.floor(Date.now() / 1000);
 
     // Global kill switch
     if (env.GLOBAL_OFF === "1") {
       return disabledPage("Preview temporarily unavailable.");
     }
 
-    // ✅ FAIL-CLOSED: KV must exist
-    if (!env.KILLSWITCH) {
-      return disabledPage("Preview system not configured (KV missing).");
+    // ---- KV lookup (fail-closed) ----
+    let raw = null;
+    let keyUsed = null;
+
+    if (env.KILLSWITCH) {
+      const v1 = await env.KILLSWITCH.get(clientSlug);
+      const v2 = await env.KILLSWITCH.get(`p/${clientSlug}`);
+      raw = v1 ?? v2;
+      keyUsed = v1 != null ? clientSlug : (v2 != null ? `p/${clientSlug}` : null);
     }
 
-    // Read KV (support both key styles)
-    const v1 = await env.KILLSWITCH.get(clientSlug);
-    const v2 = await env.KILLSWITCH.get(`p/${clientSlug}`);
-    const raw = v1 ?? v2;
-
-    // ✅ FAIL-CLOSED: missing key = disabled
+    // If you want fail-closed: NO KV entry => disabled
     if (!raw) {
+      if (debug) {
+        return new Response(
+          JSON.stringify(
+            {
+              ok: false,
+              reason: "No KV entry found (fail-closed)",
+              clientSlug,
+              lookedUp: [clientSlug, `p/${clientSlug}`],
+              keyUsed,
+              raw,
+              now,
+              hasKVBinding: !!env.KILLSWITCH,
+              hasPagesOrigin: !!env.PAGES_ORIGIN,
+            },
+            null,
+            2
+          ),
+          { status: 200, headers: { "Content-Type": "application/json" } }
+        );
+      }
       return disabledPage("This preview is not enabled.");
     }
 
-    // Legacy: "off"
-    if (String(raw).trim().toLowerCase() === "off") {
-      return disabledPage("This preview has been turned off.");
+    // Parse KV value
+    const parsed = parseKV(raw);
+    const status = String(parsed?.status || "").toLowerCase();
+    const expiresAt = Number(parsed?.expiresAt || 0);
+
+    if (debug) {
+      return new Response(
+        JSON.stringify(
+          {
+            ok: true,
+            clientSlug,
+            keyUsed,
+            raw,
+            parsed,
+            status,
+            expiresAt,
+            now,
+            expired: !!expiresAt && now >= expiresAt,
+            hasKVBinding: !!env.KILLSWITCH,
+            pagesOrigin: env.PAGES_ORIGIN || null,
+          },
+          null,
+          2
+        ),
+        { status: 200, headers: { "Content-Type": "application/json" } }
+      );
     }
 
-    // JSON: {"status":"on|off","expiresAt":unixSeconds}
-    try {
-      const obj = JSON.parse(raw);
-      const status = String(obj.status || "").toLowerCase();
-      const expiresAt = Number(obj.expiresAt || 0);
-      const now = Math.floor(Date.now() / 1000);
+    if (status === "off") return disabledPage("This preview has been turned off.");
+    if (expiresAt && now >= expiresAt) return disabledPage("This preview link has expired.");
 
-      if (status !== "on") {
-        return disabledPage("This preview has been turned off.");
-      }
-
-      if (expiresAt && now >= expiresAt) {
-        return disabledPage("This preview link has expired.");
-      }
-    } catch (e) {
-      // ✅ FAIL-CLOSED: not valid JSON and not "off" -> disable
-      return disabledPage("This preview is not enabled.");
-    }
-
-    // Proxy to Pages origin
+    // ---- Proxy to Pages ----
     const origin = env.PAGES_ORIGIN;
-    if (!origin) {
-      return new Response("Missing PAGES_ORIGIN", { status: 500 });
-    }
+    if (!origin) return new Response("Missing PAGES_ORIGIN", { status: 500 });
 
     const targetUrl = new URL(origin);
     targetUrl.pathname = url.pathname;
@@ -72,13 +98,30 @@ export default {
     const headers = new Headers(resp.headers);
     headers.set("Cache-Control", "no-store");
 
-    return new Response(resp.body, {
-      status: resp.status,
-      statusText: resp.statusText,
-      headers,
-    });
+    return new Response(resp.body, { status: resp.status, headers });
   },
 };
+
+function parseKV(raw) {
+  const s = String(raw).trim();
+
+  // Legacy: "off"
+  if (s.toLowerCase() === "off") return { status: "off" };
+
+  // Normal JSON
+  try {
+    return JSON.parse(s);
+  } catch {}
+
+  // Double-encoded JSON: "\"{...}\""
+  try {
+    const once = JSON.parse(s);
+    if (typeof once === "string") return JSON.parse(once);
+  } catch {}
+
+  // If unknown, default “on”
+  return { status: "on" };
+}
 
 function disabledPage(message) {
   return new Response(
@@ -97,7 +140,7 @@ function disabledPage(message) {
     <a class="btn" href="https://golivelocal.ca">GoLive Local</a>
   </div>
 </body></html>`,
-    { status: 403, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } }
+    { status: 403, headers: { "Content-Type": "text/html; charset=utf-8" } }
   );
 }
 
