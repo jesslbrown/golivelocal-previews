@@ -9,6 +9,8 @@ compatibility_date = "2025-12-29"
 [vars]
 PAGES_ORIGIN = "https://golivelocal-previews.pages.dev"
 # GLOBAL_OFF = "0"   # optional default
+STRIPE_CHECKOUT_URL = "https://buy.stripe.com/28E6oH7Zq4GObxF91F08g00"
+HOME_URL = "https://golivelocal.ca"
 
 [[kv_namespaces]]
 binding = "KILLSWITCH"
