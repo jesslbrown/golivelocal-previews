@@ -7,10 +7,8 @@ export default {
       return new Response("Not found", { status: 404 });
     }
 
-    // /p/<client>/...
-    const parts = url.pathname.split("/").filter(Boolean);
+    const parts = url.pathname.split("/").filter(Boolean); // ["p","clientSlug",...]
     const clientSlug = parts[1] || "";
-
     if (!clientSlug) {
       return new Response("Missing preview id", { status: 400 });
     }
@@ -20,57 +18,47 @@ export default {
       return disabledPage("Preview temporarily unavailable.");
     }
 
-    let debugInfo = null;
-
-    // Per-client kill switch (KV)
-    if (env.KILLSWITCH) {
-      // IMPORTANT: disable KV edge caching so updates apply immediately
-      const v1 = await env.KILLSWITCH.get(clientSlug, { cacheTtl: 0 });
-      const v2 = await env.KILLSWITCH.get(`p/${clientSlug}`, { cacheTtl: 0 });
-      const raw = v1 ?? v2;
-
-      debugInfo = { keyTried1: clientSlug, keyTried2: `p/${clientSlug}`, raw };
-
-      if (raw) {
-        // Simple legacy: "off"
-        if (String(raw).trim().toLowerCase() === "off") {
-          return disabledPage("This preview has been turned off.");
-        }
-
-        // JSON: {"status":"on|off","expiresAt":<unix seconds>}
-        try {
-          const obj = JSON.parse(raw);
-          const status = String(obj.status || "").toLowerCase();
-          const expiresAt = Number(obj.expiresAt || 0);
-          const now = Math.floor(Date.now() / 1000);
-
-          debugInfo.parsed = { status, expiresAt, now, expired: !!(expiresAt && now >= expiresAt) };
-
-          if (status === "off") {
-            return disabledPage("This preview has been turned off.");
-          }
-
-          if (expiresAt && now >= expiresAt) {
-            return disabledPage("This preview link has expired.");
-          }
-        } catch (e) {
-          // If it's not JSON and not "off", treat as "on"
-          debugInfo.parseError = String(e);
-        }
-      }
+    // ✅ FAIL-CLOSED: KV must exist
+    if (!env.KILLSWITCH) {
+      return disabledPage("Preview system not configured (KV missing).");
     }
 
-    // DEBUG: visit ?debug=1 to see what the Worker reads from KV
-    // (Remove this block once you’re done testing)
-    if (url.searchParams.get("debug") === "1") {
-      return new Response(JSON.stringify({ clientSlug, debugInfo }, null, 2), {
-        status: 200,
-        headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
-      });
+    // Read KV (support both key styles)
+    const v1 = await env.KILLSWITCH.get(clientSlug);
+    const v2 = await env.KILLSWITCH.get(`p/${clientSlug}`);
+    const raw = v1 ?? v2;
+
+    // ✅ FAIL-CLOSED: missing key = disabled
+    if (!raw) {
+      return disabledPage("This preview is not enabled.");
+    }
+
+    // Legacy: "off"
+    if (String(raw).trim().toLowerCase() === "off") {
+      return disabledPage("This preview has been turned off.");
+    }
+
+    // JSON: {"status":"on|off","expiresAt":unixSeconds}
+    try {
+      const obj = JSON.parse(raw);
+      const status = String(obj.status || "").toLowerCase();
+      const expiresAt = Number(obj.expiresAt || 0);
+      const now = Math.floor(Date.now() / 1000);
+
+      if (status !== "on") {
+        return disabledPage("This preview has been turned off.");
+      }
+
+      if (expiresAt && now >= expiresAt) {
+        return disabledPage("This preview link has expired.");
+      }
+    } catch (e) {
+      // ✅ FAIL-CLOSED: not valid JSON and not "off" -> disable
+      return disabledPage("This preview is not enabled.");
     }
 
     // Proxy to Pages origin
-    const origin = env.PAGES_ORIGIN; // https://golivelocal-previews.pages.dev
+    const origin = env.PAGES_ORIGIN;
     if (!origin) {
       return new Response("Missing PAGES_ORIGIN", { status: 500 });
     }
@@ -79,8 +67,7 @@ export default {
     targetUrl.pathname = url.pathname;
     targetUrl.search = url.search;
 
-    const newReq = new Request(targetUrl.toString(), request);
-    const resp = await fetch(newReq);
+    const resp = await fetch(new Request(targetUrl.toString(), request));
 
     const headers = new Headers(resp.headers);
     headers.set("Cache-Control", "no-store");
