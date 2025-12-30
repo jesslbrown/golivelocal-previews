@@ -8,7 +8,7 @@ export default {
     }
 
     // /p/<client>/...
-    const parts = url.pathname.split("/").filter(Boolean); // ["p","client-abc",...]
+    const parts = url.pathname.split("/").filter(Boolean);
     const clientSlug = parts[1] || "";
 
     if (!clientSlug) {
@@ -20,14 +20,16 @@ export default {
       return disabledPage("Preview temporarily unavailable.");
     }
 
+    let debugInfo = null;
+
     // Per-client kill switch (KV)
     if (env.KILLSWITCH) {
-      // ✅ Support BOTH key styles:
-      // 1) "clientSlug" -> "off" OR JSON
-      // 2) "p/clientSlug" -> JSON
-      const v1 = await env.KILLSWITCH.get(clientSlug);
-      const v2 = await env.KILLSWITCH.get(`p/${clientSlug}`);
+      // IMPORTANT: disable KV edge caching so updates apply immediately
+      const v1 = await env.KILLSWITCH.get(clientSlug, { cacheTtl: 0 });
+      const v2 = await env.KILLSWITCH.get(`p/${clientSlug}`, { cacheTtl: 0 });
       const raw = v1 ?? v2;
+
+      debugInfo = { keyTried1: clientSlug, keyTried2: `p/${clientSlug}`, raw };
 
       if (raw) {
         // Simple legacy: "off"
@@ -42,6 +44,8 @@ export default {
           const expiresAt = Number(obj.expiresAt || 0);
           const now = Math.floor(Date.now() / 1000);
 
+          debugInfo.parsed = { status, expiresAt, now, expired: !!(expiresAt && now >= expiresAt) };
+
           if (status === "off") {
             return disabledPage("This preview has been turned off.");
           }
@@ -51,8 +55,18 @@ export default {
           }
         } catch (e) {
           // If it's not JSON and not "off", treat as "on"
+          debugInfo.parseError = String(e);
         }
       }
+    }
+
+    // DEBUG: visit ?debug=1 to see what the Worker reads from KV
+    // (Remove this block once you’re done testing)
+    if (url.searchParams.get("debug") === "1") {
+      return new Response(JSON.stringify({ clientSlug, debugInfo }, null, 2), {
+        status: 200,
+        headers: { "Content-Type": "application/json; charset=utf-8", "Cache-Control": "no-store" },
+      });
     }
 
     // Proxy to Pages origin
@@ -66,10 +80,8 @@ export default {
     targetUrl.search = url.search;
 
     const newReq = new Request(targetUrl.toString(), request);
-
     const resp = await fetch(newReq);
 
-    // While testing: avoid cache surprises
     const headers = new Headers(resp.headers);
     headers.set("Cache-Control", "no-store");
 
@@ -98,7 +110,7 @@ function disabledPage(message) {
     <a class="btn" href="https://golivelocal.ca">GoLive Local</a>
   </div>
 </body></html>`,
-    { status: 403, headers: { "Content-Type": "text/html; charset=utf-8" } }
+    { status: 403, headers: { "Content-Type": "text/html; charset=utf-8", "Cache-Control": "no-store" } }
   );
 }
 
