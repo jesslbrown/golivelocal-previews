@@ -1,0 +1,584 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>M. Merlihan Plumbing, Heating &amp; Air Ltd. — Mechanical contractor in Hamilton</title>
+  <meta name="description" content="M. Merlihan Plumbing, Heating &amp; Air Ltd. provides Mechanical contractor services in Hamilton. Request a quote, get clear next steps, and book fast." />
+
+  <style>
+    :root{
+      /* Brighter modern palette (you can swap these anytime) */
+      --bg:#FFFFFF;
+      --text:#0F172A;
+      --muted:#64748B;
+
+      --primary:#2563EB;
+      --accent:#F59E0B;
+
+      --card: rgba(255,255,255,.85);
+      --line: rgba(15,23,42,.10);
+      --line2: rgba(15,23,42,.06);
+
+      --shadow: 0 22px 60px rgba(15,23,42,.10);
+      --shadow2: 0 10px 26px rgba(15,23,42,.10);
+      --shadow3: 0 8px 16px rgba(15,23,42,.08);
+
+      --radius: 22px;
+      --radius2: 14px;
+      --max:1140px;
+
+      --grad: linear-gradient(135deg, var(--primary), #3B82F6);
+      --gradSoft: linear-gradient(135deg, rgba(37,99,235,.14), rgba(245,158,11,.14));
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji","Segoe UI Emoji";
+      color:var(--text);
+      background:
+        radial-gradient(1000px 520px at 15% -10%, rgba(37,99,235,.16), transparent 60%),
+        radial-gradient(900px 520px at 95% 0%, rgba(245,158,11,.14), transparent 55%),
+        radial-gradient(900px 700px at 60% 115%, rgba(37,99,235,.10), transparent 55%),
+        var(--bg);
+      line-height:1.6;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+      overflow-x: hidden; /* ✅ prevents tiny horizontal overflow on some mobiles */
+    }
+
+    a{color:inherit; text-decoration:none}
+    .container{max-width:var(--max); margin:0 auto; padding:0 20px}
+
+    /* Top bar */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      background: rgba(255,255,255,.78);
+      backdrop-filter: blur(12px) saturate(140%);
+      border-bottom: 1px solid var(--line);
+    }
+    .topbar-inner{
+      display:flex; align-items:center; justify-content:space-between;
+      padding:14px 0;
+      gap:16px;
+      flex-wrap: wrap; /* ✅ allow wrapping so CTA never gets pushed off-screen */
+    }
+
+    .brand{
+      display:flex; align-items:center; gap:12px;
+      font-weight:950;
+      letter-spacing:-.2px;
+      min-width: 0; /* ✅ allow text to shrink */
+      flex: 1 1 auto;
+    }
+    .brand > div{min-width:0}
+    .brand .name{white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+    .logo{
+      width:42px; height:42px; border-radius: 16px;
+      background: var(--grad);
+      display:grid; place-items:center;
+      box-shadow: 0 18px 38px rgba(37,99,235,.22);
+      flex:0 0 42px;
+      position:relative;
+      overflow:hidden;
+    }
+    .logo::after{
+      content:"";
+      position:absolute; inset:-2px;
+      background: radial-gradient(220px 140px at 15% 10%, rgba(255,255,255,.70), transparent 58%);
+      pointer-events:none;
+    }
+    .logo svg{width:20px; height:20px}
+
+    .nav{
+      display:flex; align-items:center; gap:10px;
+      color:var(--muted);
+      font-weight:900; font-size:14px;
+      flex: 0 0 auto;
+    }
+    .nav a{
+      padding:10px 12px;
+      border-radius: 999px;
+      border: 1px solid transparent;
+      transition: background .15s ease, border-color .15s ease, color .15s ease;
+    }
+    .nav a:hover{
+      background: rgba(15,23,42,.04);
+      border-color: rgba(15,23,42,.06);
+      color: var(--text);
+    }
+
+    .cta-row{
+      display:flex;
+      gap:10px;
+      align-items:center;
+      flex: 0 0 auto;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px 14px;
+      border-radius: 999px;
+      font-weight:950;
+      border:1px solid var(--line);
+      background: rgba(255,255,255,.92);
+      box-shadow: var(--shadow3);
+      transition: transform .15s ease, box-shadow .15s ease, background .15s ease;
+      gap:10px;
+      white-space:nowrap;
+      cursor:pointer;
+      max-width: 100%;          /* ✅ button can shrink */
+      min-width: 0;             /* ✅ allow text to shrink */
+    }
+    .btn:hover{
+      transform: translateY(-1px);
+      box-shadow: var(--shadow2);
+      background: #fff;
+    }
+    .btn-primary{
+      border-color: transparent;
+      background: var(--grad);
+      color:#fff;
+      box-shadow: 0 20px 45px rgba(37,99,235,.20);
+    }
+    .btn-primary:hover{
+      box-shadow: 0 26px 60px rgba(37,99,235,.24);
+      transform: translateY(-1px);
+      filter: saturate(1.05);
+    }
+
+    .pill{
+      display:inline-flex; gap:8px; align-items:center;
+      padding:10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.85);
+      border: 1px solid var(--line2);
+      color: var(--muted);
+      font-weight:950; font-size:13px;
+      box-shadow: var(--shadow3);
+      white-space:nowrap;
+    }
+
+    /* Hero */
+    .hero{padding:68px 0 40px}
+    .hero-grid{
+      display:grid;
+      gap:26px;
+      grid-template-columns: 1.2fr .8fr;
+      align-items:stretch;
+    }
+    .headline{
+      font-size: clamp(36px, 4.2vw, 56px);
+      line-height:1.02;
+      margin:14px 0 12px;
+      letter-spacing:-1px;
+    }
+    .subhead{
+      color: var(--muted);
+      font-size: clamp(16px, 1.5vw, 18px);
+      max-width: 58ch;
+      margin:0 0 18px;
+      font-weight: 800;
+    }
+    .hero-actions{display:flex; gap:12px; flex-wrap:wrap; margin:18px 0 10px}
+
+    .trust{
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      margin-top:12px;
+    }
+    .trust .chip{
+      padding:10px 12px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.88);
+      border: 1px solid var(--line2);
+      color: var(--muted);
+      font-weight: 950;
+      font-size:13px;
+      display:flex; gap:8px; align-items:center;
+      box-shadow: var(--shadow3);
+    }
+
+    /* Cards */
+    .card{
+      background: rgba(255,255,255,.88);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+    .hero-card{
+      padding:18px;
+      position:relative;
+      overflow:hidden;
+    }
+    .hero-card::before{
+      content:"";
+      position:absolute; inset:-1px;
+      background: var(--gradSoft);
+      opacity:.55;
+      pointer-events:none;
+      border-radius: var(--radius);
+    }
+    .hero-card > *{position:relative; z-index:1}
+    .hero-card h3{margin:0 0 10px; font-size:16px; letter-spacing:-.2px}
+    .hero-card p{margin:0 0 14px; color:var(--muted); font-size:14px; font-weight:800}
+
+    .form{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .input{
+      width:100%;
+      padding:12px 12px;
+      border-radius: 14px;
+      border: 1px solid rgba(15,23,42,.12);
+      background: #fff;
+      color: var(--text);
+      outline:none;
+      font-family:inherit;
+      transition: box-shadow .15s ease, border-color .15s ease;
+    }
+    .input::placeholder{color: rgba(100,116,139,.95); font-weight:700}
+    .input:focus{
+      border-color: rgba(37,99,235,.45);
+      box-shadow: 0 0 0 4px rgba(37,99,235,.14);
+    }
+    .form .full{grid-column:1/-1}
+
+    /* Sections */
+    section{padding:44px 0}
+    .section-title{
+      font-size:22px;
+      margin:0 0 8px;
+      letter-spacing:-.35px;
+    }
+    .section-sub{
+      margin:0 0 18px;
+      color:var(--muted);
+      font-weight:900;
+    }
+
+    .grid-3{
+      display:grid;
+      gap:14px;
+      grid-template-columns: repeat(3, 1fr);
+    }
+
+    .feature{
+      padding:18px;
+      transition: transform .15s ease, box-shadow .15s ease;
+    }
+    .feature:hover{
+      transform: translateY(-2px);
+      box-shadow: 0 26px 65px rgba(15,23,42,.12);
+    }
+    .feature h4{margin:10px 0 6px; letter-spacing:-.2px}
+    .feature p{margin:0; color:var(--muted); font-size:14px; font-weight:800}
+
+    .icon{
+      width:46px; height:46px;
+      border-radius: 16px;
+      background: rgba(37,99,235,.10);
+      border: 1px solid rgba(37,99,235,.18);
+      display:grid; place-items:center;
+      box-shadow: 0 12px 26px rgba(37,99,235,.10);
+    }
+
+    /* Coverage + How it works */
+    .split{
+      display:grid; gap:14px;
+      grid-template-columns: 1fr 1fr;
+      align-items:stretch;
+    }
+    .box{padding:18px}
+
+    .list{
+      margin:10px 0 0;
+      padding:0;
+      list-style:none;
+      color: var(--muted);
+    }
+    .list li{
+      display:flex;
+      gap:10px;
+      padding:12px 0;
+      border-top: 1px solid var(--line2);
+      font-weight:900;
+    }
+    .list li:first-child{border-top:none}
+
+    .check{
+      width:24px; height:24px;
+      border-radius: 10px;
+      background: rgba(245,158,11,.18);
+      border: 1px solid rgba(245,158,11,.26);
+      display:grid; place-items:center;
+      flex:0 0 24px;
+      font-weight:950;
+      color:#92400E;
+      box-shadow: 0 10px 18px rgba(245,158,11,.12);
+    }
+
+    /* Footer */
+    footer{padding:30px 0 44px; color:var(--muted)}
+    .footer-grid{
+      display:flex;
+      justify-content:space-between;
+      gap:16px;
+      flex-wrap:wrap;
+      border-top:1px solid var(--line);
+      padding-top:18px;
+      font-weight:900;
+    }
+
+    /* ✅ MOBILE FIXES (Topbar CTA cut-off) */
+    @media (max-width: 920px){
+      .hero-grid{grid-template-columns:1fr}
+      .grid-3{grid-template-columns:1fr}
+      .split{grid-template-columns:1fr}
+      .nav{display:none}
+      .form{grid-template-columns:1fr}
+      .hero{padding:48px 0 30px}
+      section{padding:34px 0}
+    }
+
+    @media (max-width: 560px){
+      .container{padding:0 14px}
+      .topbar-inner{gap:10px; padding:10px 0}
+      .logo{width:38px; height:38px; border-radius:14px; flex:0 0 38px}
+      .pill{display:none} /* ✅ frees space so CTA never gets shoved off-screen */
+      .cta-row{width:100%} /* ✅ CTA row drops to its own line */
+      .cta-row .btn{width:100%; justify-content:center} /* ✅ full-width button */
+      .brand{flex:1 1 100%} /* ✅ brand takes the first line */
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Sticky Top Bar -->
+  <div class="topbar">
+    <div class="container">
+      <div class="topbar-inner">
+        <a class="brand" href="#top">
+          <div class="logo" aria-hidden="true">
+            <svg viewBox="0 0 24 24" fill="none">
+              <path d="M4 14.5h10.5l1.6-4.2a2 2 0 0 1 1.87-1.3H20" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+              <path d="M5.5 14.5V9.8A2.8 2.8 0 0 1 8.3 7h4.4" stroke="#ffffff" stroke-width="2" stroke-linecap="round"/>
+              <path d="M7.2 19.2a1.7 1.7 0 1 0 0-3.4 1.7 1.7 0 0 0 0 3.4Z" fill="#ffffff"/>
+              <path d="M17.2 19.2a1.7 1.7 0 1 0 0-3.4 1.7 1.7 0 0 0 0 3.4Z" fill="#ffffff"/>
+            </svg>
+          </div>
+          <div>
+            <div class="name">M. Merlihan Plumbing, Heating &amp; Air Ltd.</div>
+            <div style="font-size:12px; color:var(--muted); font-weight:700">Mechanical contractor • Hamilton</div>
+          </div>
+        </a>
+
+        <nav class="nav" aria-label="Primary">
+          <a href="#services">Services</a>
+          <a href="#coverage">Coverage</a>
+          <a href="#process">How it works</a>
+          <a href="#faq">FAQ</a>
+        </nav>
+
+        <div class="cta-row">
+          <span class="pill">⏱️ Fast response</span>
+          <a class="btn btn-primary" href="tel:+19055193478">Schedule A Consultation</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Hero -->
+  <header class="hero" id="top">
+    <div class="container">
+      <div class="hero-grid">
+        <div>
+          <div class="pill">📍 Local Mechanical contractor in <strong style="color:var(--text)">Hamilton</strong></div>
+
+          <h1 class="headline">
+            <span style="color:var(--primary)">M. Merlihan Plumbing, Heating &amp; Air Ltd.</span><br/>
+          </h1>
+
+          <p class="subhead">
+            M. Merlihan Plumbing, Heating &amp; Air Ltd. provides reliable mechanical contracting services in Hamilton to keep your home comfortable year-round.
+          </p>
+
+          <div class="hero-actions">
+            <a class="btn btn-primary" href="tel:+19055193478">📞 Schedule A Consultation</a>
+            <a class="btn" href="#quote">💬 Get a Quick Quote</a>
+            <a class="btn" href="#services">📋 View Services</a>
+          </div>
+
+          <div class="trust">
+            <div class="chip">✅ Clear pricing</div>
+            <div class="chip">✅ Fast scheduling</div>
+            <div class="chip">✅ Professional service</div>
+          </div>
+        </div>
+
+        <!-- Quote card -->
+        <div class="card hero-card" id="quote">
+          <h3>Request a quote</h3>
+          <p>Tell us what you need and where. We’ll reply with availability.</p>
+
+          <form class="form" id="lead-form" onsubmit="event.preventDefault(); alert('Thanks! This is a demo form. Connect it to email/SMS to make it live.');">
+            <input class="input" name="name" placeholder="Full name" required />
+            <input class="input" name="phone" placeholder="Phone number" required />
+            <input class="input" name="business" placeholder="Business (optional)" />
+            <input class="input" name="city" placeholder="City" required />
+            <input class="input full" name="service" placeholder="Service needed (e.g., Plumbing Installation)" />
+            <textarea class="input full" name="message" placeholder="Describe what you need (timing, address, details)."></textarea>
+            <button class="btn btn-primary full" type="submit">Schedule A Consultation</button>
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Services -->
+  <section id="services">
+    <div class="container">
+      <h2 class="section-title">Services</h2>
+      <p class="section-sub">Popular Mechanical contractor services in Hamilton.</p>
+
+      <div class="grid-3">
+        
+        <div class="card feature">
+          <div class="icon">✅</div>
+          <h4>Plumbing Installation</h4>
+          <p>M. Merlihan Plumbing, Heating &amp; Air Ltd. provides plumbing installation in Hamilton with clear communication and reliable service.</p>
+        </div>
+        <div class="card feature">
+          <div class="icon">✅</div>
+          <h4>Heating Services</h4>
+          <p>M. Merlihan Plumbing, Heating &amp; Air Ltd. provides heating services in Hamilton with clear communication and reliable service.</p>
+        </div>
+        <div class="card feature">
+          <div class="icon">✅</div>
+          <h4>Air Conditioning</h4>
+          <p>M. Merlihan Plumbing, Heating &amp; Air Ltd. provides air conditioning in Hamilton with clear communication and reliable service.</p>
+        </div>
+        <div class="card feature">
+          <div class="icon">✅</div>
+          <h4>Drain Cleaning</h4>
+          <p>M. Merlihan Plumbing, Heating &amp; Air Ltd. provides drain cleaning in Hamilton with clear communication and reliable service.</p>
+        </div>
+        <div class="card feature">
+          <div class="icon">✅</div>
+          <h4>Boiler Repair</h4>
+          <p>M. Merlihan Plumbing, Heating &amp; Air Ltd. provides boiler repair in Hamilton with clear communication and reliable service.</p>
+        </div>
+        <div class="card feature">
+          <div class="icon">✅</div>
+          <h4>HVAC Maintenance</h4>
+          <p>M. Merlihan Plumbing, Heating &amp; Air Ltd. provides hvac maintenance in Hamilton with clear communication and reliable service.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Coverage / How it works -->
+  <section id="coverage">
+    <div class="container">
+      <div class="split">
+        <div class="card box">
+          <h2 class="section-title">Coverage area</h2>
+          <p class="section-sub">Serving Hamilton and nearby areas.</p>
+          <ul class="list">
+            
+  <li><span class="check">✓</span> Hamilton (Core)</li>
+  <li><span class="check">✓</span> Nearby neighbourhoods</li>
+  <li><span class="check">✓</span> Surrounding areas by request</li>
+  <li><span class="check">✓</span> Flexible scheduling</li>
+  <li><span class="check">✓</span> Weekday & weekend availability</li>
+
+          </ul>
+        </div>
+
+        <div class="card box" id="process">
+          <h2 class="section-title">How it works</h2>
+          <p class="section-sub">Simple, clear, and quick—no runaround.</p>
+          <ul class="list">
+            <li><span class="check">1</span> Tell us what you need</li>
+            <li><span class="check">2</span> We confirm timing + next steps</li>
+            <li><span class="check">3</span> We complete the service</li>
+          </ul>
+          <div style="margin-top:14px; display:flex; gap:10px; flex-wrap:wrap;">
+            <a class="btn btn-primary" href="tel:+19055193478">Schedule A Consultation</a>
+            <a class="btn" href="#faq">Read FAQ</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <h2 class="section-title">FAQ</h2>
+      <p class="section-sub">Quick answers before you book.</p>
+
+      <div class="grid-3">
+        <div class="card feature">
+          <h4>How soon can you schedule?</h4>
+          <p>Availability varies by day and location. Contact us and we’ll confirm the earliest time.</p>
+        </div>
+        <div class="card feature">
+          <h4>Do you provide quotes?</h4>
+          <p>Yes. Share a few details and we’ll provide a quote or estimate range when possible.</p>
+        </div>
+        <div class="card feature">
+          <h4>What payment methods do you accept?</h4>
+          <p>Customize this line to match the business (cash, card, e-transfer, etc.).</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Bottom CTA -->
+  <section>
+    <div class="container">
+      <div class="card box" style="display:flex; justify-content:space-between; align-items:center; gap:16px; flex-wrap:wrap;">
+        <div>
+          <h2 class="section-title" style="margin-bottom:6px">Ready to book?</h2>
+          <p class="section-sub" style="margin:0">Call now and we’ll confirm next steps quickly.</p>
+        </div>
+        <a class="btn btn-primary" href="tel:+19055193478">📞 +19055193478</a>
+      </div>
+    </div>
+  </section>
+
+  <footer>
+    <div class="container">
+      <div class="footer-grid">
+        <div>
+          <div style="font-weight:800; color:var(--text)">M. Merlihan Plumbing, Heating &amp; Air Ltd.</div>
+          <div>Mechanical contractor • Hamilton</div>
+        </div>
+        <div>
+          <div><strong style="color:var(--text)">Phone:</strong> <a href="tel:+19055193478">+19055193478</a></div>
+        </div>
+        <div style="max-width:420px">
+          <div style="font-size:12px">
+            © <span id="year"></span> M. Merlihan Plumbing, Heating &amp; Air Ltd.. Template preview site.
+          </div>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>
